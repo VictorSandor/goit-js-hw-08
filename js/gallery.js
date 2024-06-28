@@ -64,13 +64,44 @@ const images = [
   },
 ];
 
-<li class="gallery-item">
-  <a class="gallery-link" href="large-image.jpg">
-    <img
-      class="gallery-image"
-      src="small-image.jpg"
-      data-source="large-image.jpg"
-      alt="Image description"
-    />
-  </a>
-</li>;
+const galleryContainer = document.querySelector(".gallery");
+const galleryMarkup = images
+  .map(({ preview, original, description }) => {
+    return `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${original}">
+        <img
+          class="gallery-image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+    </li>
+  `;
+  })
+  .join("");
+
+galleryContainer.innerHTML = galleryMarkup;
+
+galleryContainer.addEventListener("click", onGalleryClick);
+
+function onGalleryClick(event) {
+  event.preventDefault();
+
+  const isGalleryImage = event.target.classList.contains("gallery-image");
+  if (!isGalleryImage) return;
+
+  const largeImageURL = event.target.dataset.source;
+  console.log(largeImageURL);
+
+  openModal(largeImageURL);
+}
+
+function openModal(imageUrl) {
+  const instance = basicLightbox.create(`
+    <img src="${imageUrl}" width="1112" height="640">
+  `);
+
+  instance.show();
+}
